@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="uz" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Ingliz tilini flashcard usulida tez va oson o'rganing — AI Vocab Master Pro">
+    <meta name="keywords" content="flashcard, ingliz tili, lug'at, o'rganish, so'z yodlash, quiz, viktorina">
+    <meta name="author" content="Fleshcard Pro">
+    <title>⚡ Fleshcard Pro — AI Vocab Master</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/responsive.css">
+
+    <style>
+        /* Auth modal */
+        .auth-overlay {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(7, 9, 14, 0.95);
+            display: flex; align-items: center; justify-content: center;
+            z-index: 1000; padding: 20px;
+        }
+        .auth-box {
+            background: var(--card-bg); border: 1px solid var(--card-border);
+            border-radius: 24px; padding: 32px 28px; width: 100%; max-width: 410px;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+        }
+        .auth-box h2 {
+            text-align: center; margin-bottom: 6px;
+            background: linear-gradient(135deg, #818cf8, #34d399);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            font-size: 26px; font-weight: 800;
+        }
+        .auth-box p { text-align: center; color: var(--text-muted); font-size: 13px; margin-bottom: 18px; }
+        
+        /* Auth nav tabs */
+        .auth-nav-tabs {
+            display: flex;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 4px;
+            margin-bottom: 18px;
+            gap: 4px;
+        }
+        .auth-nav-tab {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            background: transparent;
+            color: var(--text-muted);
+            font-weight: 700;
+            font-size: 13px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .auth-nav-tab.active {
+            background: var(--accent);
+            color: #ffffff;
+            box-shadow: 0 4px 12px var(--accent-glow);
+        }
+
+        .auth-box input { margin-bottom: 12px; }
+        .auth-box .btn-primary { width: 100%; margin-top: 6px; padding: 13px; font-size: 15px; }
+        .auth-toggle { text-align: center; margin-top: 16px; font-size: 13px; color: var(--text-muted); }
+        .auth-toggle a { color: var(--accent); cursor: pointer; text-decoration: underline; font-weight: 600; }
+        .auth-error { color: #f87171; font-size: 13px; text-align: center; margin-top: 12px; display: none;
+            background: rgba(239,68,68,0.12); padding: 10px; border-radius: 10px; border: 1px solid rgba(239,68,68,0.25); }
+
+        .demo-btn {
+            width: 100%;
+            margin-top: 10px;
+            background: rgba(16, 185, 129, 0.15);
+            border: 1px solid rgba(16, 185, 129, 0.35);
+            color: #34d399;
+            padding: 11px;
+            font-size: 13px;
+            font-weight: 700;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .demo-btn:hover {
+            background: rgba(16, 185, 129, 0.25);
+            transform: translateY(-1px);
+        }
+
+        .user-name { font-size: 13px; font-weight: 600; color: var(--accent); }
+        .logout-btn {
+            background: rgba(239,68,68,0.15); border: 1px solid rgba(239,68,68,0.3);
+            color: #f87171; padding: 6px 12px; font-size: 12px; border-radius: 8px; cursor: pointer;
+        }
+        .logout-btn:hover { background: rgba(239,68,68,0.25); }
+    </style>
+</head>
+<body>
+
+<!-- ===== AUTH MODAL ===== -->
+<div class="auth-overlay" id="authOverlay">
+    <div class="auth-box">
+        <h2>⚡ Fleshcard Pro</h2>
+        <p id="authSubtitle">Ingliz tilini so'zma-so'z aqlli tarzda o'rganing</p>
+
+        <!-- TABS: KIRISH VA RO'YXATDAN O'TISH -->
+        <div class="auth-nav-tabs">
+            <button class="auth-nav-tab active" id="tabBtnLogin" onclick="formniAlmashtir('login')">🔑 Kirish</button>
+            <button class="auth-nav-tab" id="tabBtnRegister" onclick="formniAlmashtir('register')">✨ Ro'yxatdan o'tish</button>
+        </div>
+
+        <!-- 1. LOGIN FORM -->
+        <div id="loginForm">
+            <input type="email" id="loginEmail" placeholder="Email manzilingiz" autocomplete="email">
+            <input type="password" id="loginPassword" placeholder="Parolingiz" autocomplete="current-password">
+            <button class="btn-primary" onclick="loginBosish()">Kirish 🚀</button>
+
+            <button class="demo-btn" onclick="demoBilanKirish()">⚡ Demo hisob orqali 1-bosishda kirish</button>
+
+            <div class="auth-toggle">
+                Hisobingiz yo'qmi? <a onclick="formniAlmashtir('register')">Ro'yxatdan o'ting</a>
+            </div>
+        </div>
+
+        <!-- 2. REGISTER FORM -->
+        <div id="registerForm" style="display:none;">
+            <input type="text" id="regUsername" placeholder="Foydalanuvchi nomi (masalan: ali)" autocomplete="username">
+            <input type="email" id="regEmail" placeholder="Email manzilingiz (masalan: ali@gmail.com)" autocomplete="email">
+            <input type="password" id="regPassword" placeholder="Parol (kamida 6 ta belgi)" autocomplete="new-password">
+            <button class="btn-primary" onclick="registerBosish()">Ro'yxatdan o'tish ✅</button>
+
+            <div class="auth-toggle">
+                Hisobingiz bormi? <a onclick="formniAlmashtir('login')">Kirish oynasiga qaytish</a>
+            </div>
+        </div>
+
+        <div class="auth-error" id="authError"></div>
+    </div>
+</div>
+
+<!-- ===== ASOSIY ILOVA ===== -->
+<div class="container" id="mainApp" style="display:none;">
+    <header>
+        <div class="logo-wrap" onclick="dashboardgaQaytish()">
+            <span style="font-size: 26px;">⚡</span>
+            <span class="logo">Fleshcard Pro</span>
+        </div>
+
+        <div class="header-actions">
+            <button class="theme-toggle-btn" id="themeToggleBtn" onclick="mavzuniAlmashtir()" title="Mavzuni o'zgartirish">🌙</button>
+            <span class="stats-badge" id="globalStats">🏆 0 ta</span>
+            <span class="user-name" id="userName"></span>
+            <button class="logout-btn" onclick="chiqishBosish()" title="Chiqish">Chiqish</button>
+        </div>
+    </header>
+
+    <!-- DASHBOARD VIEW -->
+    <div id="dashboardView">
+        <div class="dashboard-toolbar">
+            <div class="section-title" style="margin-bottom: 0;">📁 Mening Bo'limlarim</div>
+            <div class="toolbar-actions">
+                <button class="btn-secondary btn-sm" onclick="hammaMalumotniEksport()" title="Lug'atni JSON qilib yuklab olish">⬇️ Eksport</button>
+                <button class="btn-secondary btn-sm" onclick="document.getElementById('importFileInput').click()" title="JSON fayldan yuklash">⬆️ Import</button>
+                <input type="file" id="importFileInput" accept=".json" style="display:none;" onchange="fayldanImportQilish(event)">
+            </div>
+        </div>
+
+        <div class="units-grid" id="unitsGrid"></div>
+
+        <div class="create-box">
+            <h3>➕ Yangi bo'lim ochish</h3>
+            <div class="row-group">
+                <input type="text" id="newUnitName" placeholder="Bo'lim nomi (masalan: Unit 1, IELTS 500 yoki Essential)" onkeydown="if(event.key==='Enter') yangiUnitQoshish()">
+                <button class="btn-primary" onclick="yangiUnitQoshish()">Ochish</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- STUDY VIEW -->
+    <div id="studyView" class="study-view">
+        <div class="study-header">
+            <button class="btn-secondary btn-sm" onclick="dashboardgaQaytish()">⬅️ Bo'limlar</button>
+            <h3 id="currentUnitTitle" style="color: var(--accent); font-size: 16px; font-weight: 700;">Unit 1</h3>
+            <div style="display: flex; gap: 8px; align-items: center;">
+                <span id="unitWordCountBadge" class="stats-badge" style="font-size: 11px;">0 ta so'z</span>
+                <button class="btn-secondary btn-sm" onclick="batchModalOchish()" title="Bir vaqtda bir nechta so'z qo'shish">⚡ Ommaviy qo'shish</button>
+            </div>
+        </div>
+
+        <!-- REJIM TUGMALARI -->
+        <div class="view-mode-tabs">
+            <button class="mode-tab active" id="modeCardBtn" onclick="rejimiAlmashtir('card')">🃏 Kartochka</button>
+            <button class="mode-tab" id="modeListBtn" onclick="rejimiAlmashtir('list')">📋 So'zlar ro'yxati</button>
+            <button class="mode-tab" id="modeQuizBtn" onclick="rejimiAlmashtir('quiz')">🎯 Viktorina (Quiz)</button>
+        </div>
+
+        <!-- 1. KARTOCHKA REJIMI (TOZA, ORTIQCHA GAPLARSIZ) -->
+        <div id="cardModeContainer" style="width: 100%;">
+            <div class="sub-tabs">
+                <button class="sub-tab active" id="tabUnlearned" onclick="subTabOzgartir('unlearned')">
+                    📖 O'rganish (<span id="unlearnedCount">0</span>)
+                </button>
+                <button class="sub-tab" id="tabLearned" onclick="subTabOzgartir('learned')">
+                    ✅ Yodlangan (<span id="learnedCount">0</span>)
+                </button>
+            </div>
+
+            <!-- 3D Card Scene -->
+            <div class="card-scene" onclick="kartochkaniAylantir()">
+                <div class="card" id="flashcard">
+                    <!-- KARTA OLDI: INGLIZCHA SO'Z VA TALAFFUZ -->
+                    <div class="card-face card-front">
+                        <span class="badge">🇬🇧 ENGLISH</span>
+                        <button class="speak-btn" onclick="talaffuzBosish(event)" title="Talaffuz qilish">🔊</button>
+                        <div class="word-meta">
+                            <span class="pos-badge" id="frontPos" style="display:none;">noun</span>
+                            <span class="word-phonetic" id="frontPhonetic" style="display:none;"></span>
+                        </div>
+                        <div class="word-main" id="frontWord">Word</div>
+                        <div class="hint-text">Tarjimasini ko'rish uchun bosing (Space)</div>
+                    </div>
+
+                    <!-- KARTA ORQASI: O'ZBEKCHA TARJIMA -->
+                    <div class="card-face card-back">
+                        <span class="badge">🇺🇿 O'ZBEKCHA</span>
+                        <button class="speak-btn" onclick="talaffuzBosish(event)" title="Inglizcha talaffuz">🔊</button>
+                        <div class="word-meta">
+                            <span class="pos-badge" id="backPos" style="display:none;">noun</span>
+                        </div>
+                        <div class="word-main back-translation" id="backWord">So'z</div>
+                        <div class="hint-text">Orqaga qaytarish uchun bosing (Space)</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="nav-row">
+                <button class="btn btn-nav" onclick="oldingiSoz()">⬅️ Oldingi</button>
+                <span id="counter" style="font-weight: 700; color: var(--text-muted);">1 / 1</span>
+                <button class="btn btn-nav" onclick="keyingiSoz()">Keyingi ➡️</button>
+            </div>
+
+            <div class="action-row">
+                <button class="btn btn-success" id="masterBtn" onclick="holatniOzgartir()">✅ Yodladim</button>
+                <button class="btn btn-edit" onclick="tahrirlashModaliniOchish()" title="So'zni tahrirlash">✏️</button>
+                <button class="btn btn-danger" onclick="sozniOchirish()" title="So'zni o'chirish">🗑️</button>
+            </div>
+
+            <div class="kbd-hint">
+                Klaviatura: <span class="kbd">Space</span> aylantirish • <span class="kbd">←</span> / <span class="kbd">→</span> o'tish • <span class="kbd">M</span> yodlash • <span class="kbd">S</span> talaffuz
+            </div>
+
+            <!-- AQLLI SO'Z QO'SHISH -->
+            <div class="add-word-box">
+                <h4>✨ Yangi so'z qo'shish (Tezkor va Aqlli Lug'at)</h4>
+                
+                <div class="input-wrapper">
+                    <input type="text" id="engInput" placeholder="Inglizcha so'z yozing (masalan: improve, book, knowledge)..." autocomplete="off" oninput="tavsiyalarniQidir()" onkeydown="if(event.key==='Enter') aqlliSozQoshish()">
+                    <div class="suggestions-list" id="suggestionsList"></div>
+                </div>
+
+                <div class="status-msg" id="aiStatus">⏳ Tarjima qidirilmoqda...</div>
+                <div class="error-msg" id="errorMsg"></div>
+
+                <div>
+                    <div id="autoFillBadge" class="live-trans-badge" style="display:none;">⚡ Avtomatik tarjima tayyor!</div>
+                    <input type="text" id="uzInput" placeholder="O'zbekcha tarjimasi (avtomatik to'ladi yoki o'zingiz yozing)" onkeydown="if(event.key==='Enter') aqlliSozQoshish()">
+                </div>
+
+                <button class="btn-primary" id="addWordBtn" onclick="aqlliSozQoshish()">Bo'limga Qo'shish ➕ (Enter)</button>
+            </div>
+        </div>
+
+        <!-- 2. SO'ZLAR RO'YXATI REJIMI -->
+        <div id="listModeContainer" class="words-list-container">
+            <div class="list-toolbar">
+                <div class="search-input-wrap">
+                    <input type="text" id="wordSearchInput" placeholder="🔍 So'z yoki tarjimani qidirish..." oninput="sozlarniFiltrlash()">
+                </div>
+                <select id="wordListFilter" onchange="sozlarniFiltrlash()" style="width: auto; max-width: 140px;">
+                    <option value="all">Barchasi</option>
+                    <option value="unlearned">O'rganish</option>
+                    <option value="learned">Yodlangan</option>
+                </select>
+            </div>
+            <div id="wordsItemsList" style="display: flex; flex-direction: column; gap: 8px;"></div>
+        </div>
+
+        <!-- 3. VIKTORINA (QUIZ) REJIMI -->
+        <div id="quizModeContainer" class="quiz-container">
+            <div class="quiz-header">
+                <span id="quizProgressText">Savol 1 / 10</span>
+                <span id="quizScoreText" style="color: var(--success);">To'g'ri: 0</span>
+            </div>
+
+            <div class="quiz-question-box" id="quizQuestionBox">
+                <div class="quiz-prompt-label">To'g'ri tarjimani toping:</div>
+                <div class="quiz-question-word" id="quizQuestionWord">Word</div>
+                <button class="speak-btn" style="position: static; margin: 0 auto 16px;" onclick="quizTalaffuz()" title="Talaffuz">🔊</button>
+                <div class="quiz-options-grid" id="quizOptionsGrid"></div>
+            </div>
+
+            <div class="quiz-result-card" id="quizResultCard">
+                <div style="font-size: 32px;">🏆</div>
+                <h3 style="font-size: 20px;">Viktorina yakunlandi!</h3>
+                <div class="quiz-result-score" id="quizFinalScore">100%</div>
+                <p id="quizSummaryText" style="color: var(--text-muted); font-size: 14px;"></p>
+                <button class="btn-primary" onclick="viktorinaniBoshlash()" style="margin-top: 10px;">Qayta o'ynash 🔄</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ===== TAHRIRLASH MODALI (ORTIQCHA GAPSIZ) ===== -->
+<div class="modal-overlay" id="editModalOverlay">
+    <div class="modal-card">
+        <div class="modal-header">
+            <h3>✏️ So'zni tahrirlash</h3>
+            <button class="modal-close-btn" onclick="tahrirlashModaliniYopish()">✕</button>
+        </div>
+        <input type="hidden" id="editWordId">
+        <div>
+            <label style="font-size: 12px; color: var(--text-muted); font-weight: 600;">Inglizcha so'z</label>
+            <input type="text" id="editEnInput" style="margin-top: 4px;">
+        </div>
+        <div>
+            <label style="font-size: 12px; color: var(--text-muted); font-weight: 600;">O'zbekcha tarjimasi</label>
+            <input type="text" id="editUzInput" style="margin-top: 4px;">
+        </div>
+        <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 10px;">
+            <button class="btn-secondary" onclick="tahrirlashModaliniYopish()">Bekor qilish</button>
+            <button class="btn-primary" onclick="sozniSaqlash()">Saqlash 💾</button>
+        </div>
+    </div>
+</div>
+
+<!-- ===== OMMAVIY SO'Z QO'SHISH (BATCH ADD) MODALI ===== -->
+<div class="modal-overlay" id="batchModalOverlay">
+    <div class="modal-card" style="max-width: 500px;">
+        <div class="modal-header">
+            <h3>⚡ Ommaviy so'z qo'shish</h3>
+            <button class="modal-close-btn" onclick="batchModalYopish()">✕</button>
+        </div>
+        <p class="batch-hint">
+            Har bir qatorga bittadan so'z va uning tarjimasini yozing. So'z va tarjima o'rtasiga chiziqcha ( - ), ikki nuqta ( : ) yoki vergul qo'yishingiz mumkin.<br>
+            <strong>Masalan:</strong><br>
+            apple - olma<br>
+            knowledge - bilim<br>
+            improve - yaxshilamoq
+        </p>
+        <textarea id="batchTextInput" class="batch-textarea" placeholder="apple - olma&#10;book - kitob&#10;success - muvaffaqiyat"></textarea>
+        <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 6px;">
+            <button class="btn-secondary" onclick="batchModalYopish()">Bekor qilish</button>
+            <button class="btn-primary" onclick="batchSozlarniSaqlash()">Qo'shish 🚀</button>
+        </div>
+    </div>
+</div>
+
+<!-- TOAST BILDIRISHNOMALAR -->
+<div id="toastContainer"></div>
+
+<!-- Standard JavaScript -->
+<script src="js/app.js"></script>
+
+</body>
+</html>

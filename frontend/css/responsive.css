@@ -1,0 +1,115 @@
+/* ===== MOBIL MOSLASHUVCHAN STILLAR ===== */
+
+/* Kichik telefonlar (360px gacha) */
+@media (max-width: 360px) {
+    body {
+        padding: 10px 10px 40px;
+    }
+
+    .logo {
+        font-size: 20px;
+    }
+
+    .stats-badge {
+        font-size: 11px;
+        padding: 6px 10px;
+    }
+
+    .word-main {
+        font-size: 24px;
+    }
+
+    .card-scene {
+        height: 240px;
+    }
+
+    .ai-sentence {
+        font-size: 11px;
+    }
+
+    .quiz-options-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .toolbar-actions {
+        width: 100%;
+        justify-content: stretch;
+    }
+
+    .toolbar-actions button {
+        flex: 1;
+    }
+}
+
+/* Telefonlar (361px - 576px) */
+@media (max-width: 576px) {
+    .units-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .row-group {
+        flex-direction: column;
+    }
+
+    .quiz-options-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .dashboard-toolbar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .header-actions {
+        gap: 6px;
+    }
+}
+
+/* Planshetlar (577px - 768px) */
+@media (min-width: 577px) and (max-width: 768px) {
+    .units-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .study-view {
+        max-width: 540px;
+    }
+
+    .card-scene {
+        height: 290px;
+    }
+}
+
+/* Katta ekranlar (769px va undan katta) */
+@media (min-width: 769px) {
+    .container {
+        max-width: 900px;
+    }
+
+    .units-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .study-view {
+        max-width: 620px;
+    }
+
+    .card-scene {
+        height: 300px;
+    }
+
+    .word-main {
+        font-size: 34px;
+    }
+}
+
+/* Landshaft rejimi (gorizontal holat) */
+@media (max-height: 500px) and (orientation: landscape) {
+    .card-scene {
+        height: 210px;
+    }
+
+    body {
+        padding: 10px 16px 30px;
+    }
+}
